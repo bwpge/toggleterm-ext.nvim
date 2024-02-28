@@ -2,14 +2,16 @@ local M = {}
 
 ---@alias BorderStyle "double" | "none" | "rounded" | "shadow" | "single" | "solid"
 ---@alias TextAlign "left" | "right" | "center"
----@alias Size string | number
+---@alias Relative "cursor" | "editor" | "win" | table
 
 ---@class InputOptions
 ---@field border_style BorderStyle
+---@field position string | number
+---@field prompt string
+---@field relative Relative
 ---@field title string
 ---@field title_align TextAlign
----@field prompt string
----@field width Size
+---@field width string | number
 
 ---@class Config
 ---@field expand_cmd boolean
@@ -30,7 +32,9 @@ function M.default_config()
         max_history = 10,
         input = {
             border_style = "rounded",
+            position = "50%",
             prompt = "> ",
+            relative = "editor",
             title = "Launch ToggleTerm",
             title_align = "center",
             width = 0.3,

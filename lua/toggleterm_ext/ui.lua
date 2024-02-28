@@ -30,8 +30,8 @@ function M.input()
         default_value = state.last_input
     end
     local popup = NuiInput({
-        relative = "editor",
-        position = "50%",
+        relative = conf.input.relative,
+        position = conf.input.position,
         size = {
             width = conf.input.width,
         },
