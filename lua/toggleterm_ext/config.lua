@@ -22,7 +22,6 @@ local M = {}
 M._ = {}
 
 ---@return Config
----@private
 function M.default_config()
     ---@type Config
     return {
@@ -34,7 +33,7 @@ function M.default_config()
             prompt = "> ",
             title = "Launch ToggleTerm",
             title_align = "center",
-            width = 0.333,
+            width = 0.3,
         },
     }
 end

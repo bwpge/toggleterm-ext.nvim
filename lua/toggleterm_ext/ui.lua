@@ -7,9 +7,8 @@ local NuiText = require("nui.text")
 
 local M = {}
 
----@private
 function M.on_select(value)
-    -- ignore only nil/whitespace values
+    -- ignore nil/whitespace values
     if not value or value:match("^%s*$") then
         return
     end

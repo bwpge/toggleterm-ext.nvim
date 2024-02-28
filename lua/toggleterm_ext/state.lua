@@ -1,8 +1,6 @@
 local M = {}
 
----@private
 M.last_input = ""
----@private
 M.history = {}
 
 ---Pushes a value onto the history list. If the history already contains the
@@ -11,7 +9,6 @@ M.history = {}
 ---The value in the list is the most recent.
 ---@param value string
 ---@param max_count integer
----@private
 function M.push_history(value, max_count)
     M.last_input = value
 
