@@ -47,13 +47,11 @@ local function telescope_picker(_)
                         return
                     end
 
-                    -- FIXME: this selection part is odd. sometimes it is a
-                    -- string and sometimes it is an entry (table)
-                    if type(selection) == "string" then
-                        ui.on_select(selection)
-                    elseif type(selection) == "table" then
-                        ui.on_select(selection.value)
-                    end
+                    -- allow telescope to actually close the window before
+                    -- dispatching the on_select handler. see:
+                    -- https://github.com/nvim-telescope/telescope.nvim/pull/2336
+                    local on_select = vim.schedule_wrap(ui.on_select)
+                    on_select(selection.value)
                 end)
                 return true
             end,
