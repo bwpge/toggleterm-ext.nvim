@@ -28,13 +28,12 @@ end
 
 ---@param opts table Options table passed in by telescope
 local function history_picker(opts)
-    local history = state.history
-    if #history < 1 then
+    local entries = state.history_entries()
+    if #entries < 1 then
         vim.notify("No launcher history to show")
         return
     end
 
-    local entries = utils.make_entries(history, true)
     make_picker(entries, ui.on_select, opts):find()
 end
 

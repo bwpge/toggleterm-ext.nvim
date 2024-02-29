@@ -28,7 +28,7 @@ function M.default_config()
     ---@type Config
     return {
         expand_cmd = false,
-        use_last_input = true,
+        use_last_input = false,
         max_history = 10,
         input = {
             border_style = "rounded",
