@@ -1,67 +1,46 @@
 local state = require("toggleterm_ext.state")
 local ui = require("toggleterm_ext.ui")
+local utils = require("toggleterm_ext.utils")
 
-local function telescope_picker(_)
+---@param entries table
+---@param cb fun(s:string)
+---@param _ table?
+---@return table
+local function make_picker(entries, cb, _)
+    local finders = require("telescope.finders")
+    local themes = require("telescope.themes")
+    local conf = require("telescope.config").values
+
+    return require("telescope.pickers").new(themes.get_dropdown(), {
+        prompt_title = "Launch History",
+        finder = finders.new_table({
+            results = entries,
+            entry_maker = utils.numbered_entry_maker,
+        }),
+        previewer = false,
+        sorter = conf.generic_sorter(),
+        attach_mappings = function(bufnr, _)
+            utils.select_string_action(bufnr, cb)
+            return true
+        end,
+    })
+end
+
+---@param opts table Options table passed in by telescope
+local function history_picker(opts)
     local history = state.history
     if #history < 1 then
-        vim.notify("No toggleterm launcher history to show")
+        vim.notify("No launcher history to show")
         return
     end
 
-    -- create entries in reverse order
-    local entries = {}
-    for i, item in ipairs(history) do
-        table.insert(entries, 1, {
-            idx = #history - i + 1,
-            value = item,
-        })
-    end
-
-    local finders = require("telescope.finders")
-    local actions = require("telescope.actions")
-    local themes = require("telescope.themes")
-    local tstate = require("telescope.actions.state")
-    local conf = require("telescope.config").values
-
-    require("telescope.pickers")
-        .new(themes.get_dropdown(), {
-            prompt_title = "Launch History",
-            finder = finders.new_table({
-                results = entries,
-                entry_maker = function(entry)
-                    local s = string.format("%d: %s", entry.idx, entry.value)
-                    return {
-                        value = entry.value,
-                        display = s,
-                        ordinal = s,
-                    }
-                end,
-            }),
-            previewer = false,
-            sorter = conf.generic_sorter(),
-            attach_mappings = function(prompt_bufnr, _)
-                actions.select_default:replace(function()
-                    actions.close(prompt_bufnr)
-                    local selection = tstate.get_selected_entry()
-                    if not selection then
-                        return
-                    end
-
-                    -- allow telescope to actually close the window before
-                    -- dispatching the on_select handler. see:
-                    -- https://github.com/nvim-telescope/telescope.nvim/pull/2336
-                    local on_select = vim.schedule_wrap(ui.on_select)
-                    on_select(selection.value)
-                end)
-                return true
-            end,
-        })
-        :find()
+    local entries = utils.make_entries(history, true)
+    make_picker(entries, ui.on_select, opts):find()
 end
 
 return require("telescope").register_extension({
     setup = function(_, _) end,
     exports = {
-        toggleterm_ext = telescope_picker,
+        toggleterm_ext = history_picker,
     },
 })
